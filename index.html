@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Merabi Khachidze — ECE Engineer</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,300&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:             #080c08;
+      --phosphor:       #00e87a;
+      --phosphor-mid:   #00a855;
+      --phosphor-dim:   #00804a;
+      --phosphor-faint: rgba(0,232,122,0.07);
+      --text:           #c8fce0;
+      --text-dim:       #557a68;
+      --border:         rgba(0,232,122,0.18);
+      --grid:           rgba(0,232,122,0.052);
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 14px;
+      line-height: 1.8;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image:
+        linear-gradient(var(--grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none; z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.055) 3px, rgba(0,0,0,0.055) 4px);
+      pointer-events: none; z-index: 0;
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; width: 100%; z-index: 100;
+      padding: 1.1rem 2.5rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(8,12,8,0.92);
+      backdrop-filter: blur(14px);
+    }
+    .nav-logo { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 800; color: var(--phosphor); letter-spacing: 0.12em; text-decoration: none; }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a { color: var(--text-dim); text-decoration: none; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--phosphor); }
+
+    /* LAYOUT */
+    section { position: relative; z-index: 1; max-width: 960px; margin: 0 auto; padding: 6rem 2.5rem; }
+    .divider { position: relative; z-index: 1; width: 100%; height: 1px; background: var(--border); }
+
+    /* HERO */
+    #hero { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding-top: 90px; }
+    .hero-label { font-size: 11px; letter-spacing: 0.35em; color: var(--phosphor); text-transform: uppercase; margin-bottom: 1.5rem; opacity: 0; animation: fadeUp 0.7s ease 0.1s forwards; }
+    .hero-name { font-family: 'Syne', sans-serif; font-size: clamp(2.8rem, 9vw, 6.5rem); font-weight: 800; color: var(--phosphor); line-height: 0.95; letter-spacing: -0.02em; margin-bottom: 1.6rem; opacity: 0; animation: fadeUp 0.7s ease 0.2s forwards; }
+    .hero-name span { text-shadow: 0 0 60px rgba(0,232,122,0.22); }
+    .hero-terminal { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; opacity: 0; animation: fadeUp 0.7s ease 0.35s forwards; }
+    .terminal-prompt { color: var(--phosphor-mid); font-size: 13px; }
+    .terminal-text { color: var(--text); font-size: 13px; font-weight: 300; }
+    .cursor { display: inline-block; width: 8px; height: 1em; background: var(--phosphor); margin-left: 2px; vertical-align: text-bottom; animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    .hero-sub { font-size: 12px; color: var(--text-dim); font-weight: 300; letter-spacing: 0.05em; opacity: 0; animation: fadeUp 0.7s ease 0.45s forwards; }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 2.5rem; opacity: 0; animation: fadeUp 0.7s ease 0.6s forwards; }
+
+    /* BUTTONS */
+    .btn { display: inline-block; padding: 0.65rem 1.5rem; border: 1px solid var(--border); color: var(--phosphor); text-decoration: none; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; transition: all 0.2s; background: transparent; cursor: pointer; }
+    .btn:hover { background: var(--phosphor-faint); border-color: var(--phosphor); }
+    .btn-primary { background: var(--phosphor); color: #080c08; border-color: var(--phosphor); font-weight: 600; }
+    .btn-primary:hover { background: #12ffaa; }
+
+    /* HEADINGS */
+    .section-label { font-size: 11px; letter-spacing: 0.3em; color: var(--phosphor); text-transform: uppercase; margin-bottom: 0.4rem; }
+    h2 { font-family: 'Syne', sans-serif; font-size: 2.1rem; font-weight: 700; color: var(--text); margin-bottom: 2.5rem; line-height: 1.1; }
+
+    /* ABOUT */
+    .about-grid { display: grid; grid-template-columns: 3fr 1fr; gap: 4rem; align-items: start; }
+    .about-text p { color: var(--text); opacity: 0.75; margin-bottom: 1.1rem; font-weight: 300; font-size: 14px; }
+    .stats { display: flex; flex-direction: column; gap: 2rem; }
+    .stat { border-left: 2px solid var(--phosphor); padding-left: 1rem; }
+    .stat-num { font-family: 'Syne', sans-serif; font-size: 1.7rem; font-weight: 800; color: var(--phosphor); line-height: 1; }
+    .stat-label { font-size: 11px; color: var(--text-dim); letter-spacing: 0.08em; margin-top: 0.2rem; }
+
+    /* FILTER */
+    .filter-bar { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .filter-btn { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; padding: 5px 14px; border: 1px solid var(--border); background: transparent; color: var(--text-dim); cursor: pointer; transition: all 0.2s; }
+    .filter-btn:hover { color: var(--phosphor); border-color: var(--phosphor); }
+    .filter-btn.active { background: var(--phosphor); color: #080c08; border-color: var(--phosphor); }
+
+    /* PROJECT CARDS */
+    .projects-grid { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--border); }
+    .project-card { padding: 2rem 2.25rem; background: rgba(0,232,122,0.018); position: relative; border-bottom: 1px solid var(--border); transition: background 0.25s; }
+    .project-card:last-child { border-bottom: none; }
+    .project-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; background: var(--phosphor); opacity: 0; transition: opacity 0.2s; }
+    .project-card:hover { background: rgba(0,232,122,0.042); }
+    .project-card:hover::before { opacity: 1; }
+    .project-card.hidden { display: none; }
+
+    .project-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 0.5rem; cursor: pointer; }
+    .project-title-row { display: flex; align-items: center; gap: 0.75rem; flex: 1; }
+    .project-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); }
+    .expand-icon { font-size: 18px; color: var(--phosphor-mid); transition: transform 0.3s; display: inline-block; line-height: 1; flex-shrink: 0; }
+    .project-card.open .expand-icon { transform: rotate(45deg); }
+    .project-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .project-tag { font-size: 10px; letter-spacing: 0.18em; color: var(--phosphor); border: 1px solid var(--border); padding: 2px 9px; text-transform: uppercase; white-space: nowrap; }
+    .project-summary { font-size: 13px; color: var(--text-dim); font-weight: 300; margin-top: 0.9rem; line-height: 1.75; max-width: 700px; }
+
+    /* EXPAND */
+    .project-detail { max-height: 0; overflow: hidden; transition: max-height 0.5s ease, opacity 0.35s ease; opacity: 0; }
+    .project-card.open .project-detail { max-height: 1200px; opacity: 1; }
+    .project-bullets { list-style: none; margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid rgba(0,232,122,0.1); display: flex; flex-direction: column; gap: 0.45rem; }
+    .project-bullets li { font-size: 12px; color: var(--text-dim); font-weight: 300; line-height: 1.7; padding-left: 1.2rem; position: relative; }
+    .project-bullets li::before { content: '›'; position: absolute; left: 0; color: var(--phosphor); font-size: 14px; }
+    .project-specs { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1.1rem; }
+    .spec { font-size: 10px; letter-spacing: 0.1em; color: var(--phosphor); background: var(--phosphor-faint); border: 1px solid rgba(0,232,122,0.14); padding: 3px 10px; text-transform: uppercase; }
+
+    /* SCHEMATIC GALLERY */
+    .schematic-gallery { display: flex; gap: 0.75rem; margin-top: 1.25rem; flex-wrap: wrap; }
+    .schematic-thumb {
+      width: 160px; height: 100px;
+      object-fit: cover; object-position: center;
+      border: 1px solid var(--border);
+      cursor: zoom-in;
+      transition: border-color 0.2s, transform 0.2s;
+      filter: brightness(0.9);
+      flex-shrink: 0;
+    }
+    .schematic-thumb:hover { border-color: var(--phosphor); transform: scale(1.03); filter: brightness(1.05); }
+    .schematic-label { font-size: 10px; color: var(--text-dim); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.3rem; text-align: center; }
+    .thumb-wrap { display: flex; flex-direction: column; align-items: center; }
+
+    /* LIGHTBOX */
+    .lightbox {
+      display: none;
+      position: fixed; inset: 0; z-index: 1000;
+      background: rgba(5,9,5,0.96);
+      align-items: center; justify-content: center;
+      padding: 2rem;
+    }
+    .lightbox.active { display: flex; }
+    .lightbox-inner { position: relative; max-width: 92vw; max-height: 88vh; }
+    .lightbox img { max-width: 100%; max-height: 85vh; border: 1px solid var(--border); display: block; }
+    .lightbox-caption { font-size: 11px; color: var(--text-dim); letter-spacing: 0.15em; text-transform: uppercase; margin-top: 0.75rem; text-align: center; }
+    .lightbox-close {
+      position: absolute; top: -2.5rem; right: 0;
+      font-size: 22px; color: var(--phosphor); cursor: pointer;
+      font-family: monospace; background: none; border: none; line-height: 1;
+    }
+    .lightbox-close:hover { color: #fff; }
+    .lightbox-nav {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      font-size: 2rem; color: var(--phosphor); cursor: pointer;
+      background: rgba(8,12,8,0.7); border: 1px solid var(--border);
+      width: 2.5rem; height: 2.5rem; display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lightbox-nav:hover { background: var(--phosphor-faint); }
+    .lightbox-prev { left: -3.5rem; }
+    .lightbox-next { right: -3.5rem; }
+
+    /* SKILLS */
+    .skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1px; border: 1px solid var(--border); }
+    .skill-cat { padding: 1.5rem 1.75rem; background: rgba(0,232,122,0.018); border-right: 1px solid var(--border); }
+    .skill-cat:last-child { border-right: none; }
+    .skill-cat-title { font-size: 10px; letter-spacing: 0.25em; color: var(--phosphor); text-transform: uppercase; margin-bottom: 0.9rem; }
+    .skill-list { list-style: none; display: flex; flex-direction: column; gap: 0.3rem; }
+    .skill-list li { font-size: 13px; color: var(--text-dim); font-weight: 300; }
+    .skill-list li::before { content: '> '; color: var(--phosphor); opacity: 0.55; }
+
+    .skill-bars { display: flex; flex-direction: column; gap: 1.1rem; margin-top: 2.5rem; }
+    .skill-bar-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim); margin-bottom: 0.4rem; }
+    .skill-bar-track { height: 3px; background: rgba(0,232,122,0.12); position: relative; overflow: hidden; }
+    .skill-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--phosphor); width: 0%; transition: width 1.2s cubic-bezier(0.4,0,0.2,1); }
+
+    /* HOBBY */
+    .hobby-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 0.5rem; }
+    .hobby-card { border: 1px solid var(--border); padding: 1.75rem 2rem; background: var(--phosphor-faint); position: relative; overflow: hidden; }
+    .hobby-card::after { content: attr(data-glyph); position: absolute; right: 1.5rem; bottom: 0.5rem; font-size: 5rem; opacity: 0.05; line-height: 1; font-family: 'Syne', sans-serif; font-weight: 800; color: var(--phosphor); pointer-events: none; }
+    .hobby-title { font-family: 'Syne', sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--text); margin-bottom: 0.75rem; }
+    .hobby-desc { font-size: 13px; color: var(--text-dim); font-weight: 300; line-height: 1.75; }
+
+    /* CONTACT */
+    .contact-content p { color: var(--text-dim); font-weight: 300; margin-bottom: 2.5rem; font-size: 14px; max-width: 520px; line-height: 1.9; }
+    .contact-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .contact-detail { margin-top: 2rem; font-size: 12px; color: var(--text-dim); display: flex; flex-direction: column; gap: 0.35rem; }
+    .contact-detail a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+    .contact-detail a:hover { color: var(--phosphor); }
+
+    /* FOOTER */
+    footer { position: relative; z-index: 1; text-align: center; padding: 2rem 2rem 2.5rem; border-top: 1px solid var(--border); font-size: 11px; color: var(--text-dim); letter-spacing: 0.12em; }
+
+    /* ANIMATIONS */
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: translateY(0); } }
+    .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 680px) {
+      nav { padding: 1rem 1.25rem; }
+      .nav-links { gap: 1.25rem; }
+      section { padding: 4rem 1.25rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .skill-cat { border-right: none; border-bottom: 1px solid var(--border); }
+      .hobby-grid { grid-template-columns: 1fr; }
+      .lightbox-prev { left: -2.5rem; }
+      .lightbox-next { right: -2.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LIGHTBOX -->
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lb-close">✕</button>
+      <button class="lightbox-nav lightbox-prev" id="lb-prev">‹</button>
+      <button class="lightbox-nav lightbox-next" id="lb-next">›</button>
+      <img id="lb-img" src="" alt="">
+      <div class="lightbox-caption" id="lb-caption"></div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#hero" class="nav-logo">MK</a>
+    <ul class="nav-links">
+      <li><a href="#about">About</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#skills">Skills</a></li>
+      <li><a href="#hobby">Beyond</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <p class="hero-label">Electrical &amp; Computer Engineer — SDSU B.S. 2026</p>
+    <h1 class="hero-name"><span>MERABI</span><br><span>KHACHIDZE</span></h1>
+    <div class="hero-terminal">
+      <span class="terminal-prompt">$&nbsp;</span>
+      <span class="terminal-text" id="typed-text"></span>
+      <span class="cursor"></span>
+    </div>
+    <p class="hero-sub">San Diego, CA &nbsp;·&nbsp; Analog &amp; Mixed-Signal &nbsp;·&nbsp; RF &amp; Power Electronics</p>
+    <div class="hero-cta">
+      <a href="#projects" class="btn btn-primary">View Projects</a>
+      <a href="mailto:meroxachidze@gmail.com" class="btn">Get in Touch</a>
+      <a href="Merabi_Khachidze_Resume.pdf" class="btn">Download CV</a>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <p class="section-label reveal">// 01. About</p>
+    <h2 class="reveal">Building at the boundary<br>of analog and digital</h2>
+    <div class="about-grid">
+      <div class="about-text reveal">
+        <p>I'm an ECE graduate of San Diego State University with a focus on analog/mixed-signal IC design, RF, and power electronics. My work spans from designing biomedical systems at the transistor level in 45nm CMOS to building switching flyback power supplies for industry. I've worked across the full stack of analog and mixed-signal hardware.</p>
+        <p>My main project was designing a switching flyback power supply for General Atomics, engineering a custom transformer from core selection through PCB, leading hardware design reviews, and coordinating directly with component vendors. Alongside that, I've built a 12-bit SAR ADC from scratch in 45nm CMOS and run an independent wireless charging desk project applying RF near-field principles.</p>
+        <p>I'm fluent in English, Russian, and Georgian, and I bring the same methodical, hands-on approach to hardware that I bring to everything I build.</p>
+      </div>
+      <div class="stats reveal">
+        <div class="stat"><div class="stat-num">~80kHz</div><div class="stat-label">Flyback switching freq.</div></div>
+        <div class="stat"><div class="stat-num">12-bit</div><div class="stat-label">SAR ADC resolution</div></div>
+        <div class="stat"><div class="stat-num">45nm</div><div class="stat-label">CMOS process node</div></div>
+        <div class="stat"><div class="stat-num">4</div><div class="stat-label">Languages spoken</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <p class="section-label reveal">// 02. Projects</p>
+    <h2 class="reveal">Selected Work</h2>
+
+    <div class="filter-bar reveal">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="power">Power Electronics</button>
+      <button class="filter-btn" data-filter="mixed-signal">Mixed-Signal IC</button>
+      <button class="filter-btn" data-filter="rf">RF / Wireless</button>
+    </div>
+
+    <div class="projects-grid reveal">
+
+      <!-- PROJECT 1: FLYBACK (FEATURED) -->
+      <div class="project-card" data-category="power">
+        <div class="project-header">
+          <div class="project-title-row">
+            <span class="expand-icon">+</span>
+            <div class="project-title">Flyback Power Supply — General Atomics</div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Power Electronics</span>
+            <span class="project-tag">Industry</span>
+            <span class="project-tag">Featured</span>
+          </div>
+        </div>
+        <p class="project-summary">Designed a switching flyback power supply for a linear actuator load in collaboration with General Atomics. Engineered a custom flyback transformer and led all hardware design reviews as student hardware lead.</p>
+        <div class="project-detail">
+          <ul class="project-bullets">
+            <li>Engineered a custom flyback transformer: calculated turns ratio, core selection, and parasitic modeling to optimize power transfer efficiency</li>
+            <li>Performed full KiCad schematic simulation to validate performance before PCB fabrication</li>
+            <li>Led hardware design reviews and served as primary point of contact with component vendors, evaluating datasheets and making final component selections</li>
+            <li>Characterized switching transients and leakage inductance via oscilloscope, observing ~1.7 kV peak spikes at ~80.6 kHz switching frequency</li>
+          </ul>
+          <div class="schematic-gallery" data-gallery="flyback">
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="flyback_bench.png" alt="Flyback Bench Test" data-caption="Bench Testing — Flyback Power Supply with Oscilloscope Probes">
+              <div class="schematic-label">Bench Test</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="flyback_assembled.jpg" alt="Assembled PCB" data-caption="Assembled PCB — Team H.E.A.T Thermal Control Valve">
+              <div class="schematic-label">Assembled PCB</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="flyback_scope.jpg" alt="Oscilloscope Capture" data-caption="Oscilloscope Capture — Switching Waveforms at ~73 kHz">
+              <div class="schematic-label">Scope Capture</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="flyback_schematic.png" alt="Flyback Schematic" data-caption="KiCad Full Schematic — Flyback Power Supply">
+              <div class="schematic-label">Schematic</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="flyback_pcb.png" alt="Flyback PCB Layout" data-caption="PCB Layout — Team H.E.A.T Thermal Control Valve">
+              <div class="schematic-label">PCB Layout</div>
+            </div>
+          </div>
+          <div class="project-specs">
+            <span class="spec">KiCad</span>
+            <span class="spec">UC3845 PWM</span>
+            <span class="spec">80–100 kHz</span>
+            <span class="spec">~1.7 kV Peak</span>
+            <span class="spec">24V 5A Output</span>
+            <span class="spec">Magnetics Design</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 2: GLUCOSE METER / SAR ADC -->
+      <div class="project-card" data-category="mixed-signal">
+        <div class="project-header">
+          <div class="project-title-row">
+            <span class="expand-icon">+</span>
+            <div class="project-title">Mixed-Signal Glucose Meter IC</div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">Mixed-Signal</span>
+            <span class="project-tag">Capstone Lead</span>
+          </div>
+        </div>
+        <p class="project-summary">Led ADC/DAC design for a fully integrated glucose monitoring system-on-chip in 45nm CMOS. Covered the full flow from MATLAB biosensor modeling and Verilog RTL to full custom Cadence Virtuoso implementation.</p>
+        <div class="project-detail">
+          <ul class="project-bullets">
+            <li>Developed clean and noisy biosensor signal models in MATLAB to define ADC input specs: dynamic range, noise floor, and bandwidth</li>
+            <li>Implemented RTL models of the full signal chain in Verilog, covering DAC bias voltage generation (VBIAS) and ADC front-end, for digital integration verification before Cadence implementation</li>
+            <li>Designed full custom ADC including 12-bit SAR logic, dynamic comparator, bootstrapped S/H, and CMOS output buffer at transistor level in Cadence Virtuoso (gpdk045)</li>
+            <li>System integrates temperature compensation, EEPROM calibration, and LCD output, covering the full mixed-signal SoC design flow</li>
+          </ul>
+          <div class="schematic-gallery" data-gallery="adc">
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="adc_toplevel.png" alt="ADC Top Level" data-caption="Cadence Virtuoso — 12-bit SAR ADC Top-Level Schematic">
+              <div class="schematic-label">Top-Level ADC</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="adc_comparator.png" alt="Comparator" data-caption="Cadence Virtuoso — Differential Comparator (45nm CMOS)">
+              <div class="schematic-label">Comparator</div>
+            </div>
+            <div class="thumb-wrap">
+              <img class="schematic-thumb" src="adc_buffer.png" alt="CMOS Buffer" data-caption="Cadence Virtuoso — CMOS Output Buffer">
+              <div class="schematic-label">CMOS Buffer</div>
+            </div>
+          </div>
+          <div class="project-specs">
+            <span class="spec">Cadence Virtuoso</span>
+            <span class="spec">gpdk045</span>
+            <span class="spec">Verilog</span>
+            <span class="spec">MATLAB</span>
+            <span class="spec">12-bit SAR</span>
+            <span class="spec">Spectre</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECT 3: WIRELESS CHARGING -->
+      <div class="project-card" data-category="rf">
+        <div class="project-header">
+          <div class="project-title-row">
+            <span class="expand-icon">+</span>
+            <div class="project-title">Wireless Charging Desk</div>
+          </div>
+          <div class="project-tags">
+            <span class="project-tag">RF / Wireless</span>
+            <span class="project-tag">Independent</span>
+          </div>
+        </div>
+        <p class="project-summary">Designing a multi-device wireless charging system using inductive resonant coupling via custom copper spiral coils — applying RF near-field energy transfer principles to a practical embedded system.</p>
+        <div class="project-detail">
+          <ul class="project-bullets">
+            <li>Designing custom copper spiral coil arrays and optimizing coil geometry for maximum coupling efficiency and minimal EMI</li>
+            <li>Developing PCB layout to interface power electronics with the coil array</li>
+            <li>Integrating a status display with embedded firmware for power regulation and device detection</li>
+          </ul>
+          <div class="project-specs">
+            <span class="spec">Inductive Coupling</span>
+            <span class="spec">PCB Layout</span>
+            <span class="spec">Altium</span>
+            <span class="spec">Embedded Firmware</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <p class="section-label reveal">// 03. Skills</p>
+    <h2 class="reveal">Technical Arsenal</h2>
+    <div class="skills-grid reveal">
+      <div class="skill-cat">
+        <div class="skill-cat-title">RF &amp; Analog Design</div>
+        <ul class="skill-list">
+          <li>ADC / DAC Architecture</li>
+          <li>Impedance Matching</li>
+          <li>Op-Amp Circuits</li>
+          <li>Flyback / SMPS</li>
+          <li>Wireless Power Transfer</li>
+          <li>Resonant Circuits</li>
+        </ul>
+      </div>
+      <div class="skill-cat">
+        <div class="skill-cat-title">EDA &amp; Simulation</div>
+        <ul class="skill-list">
+          <li>Cadence Virtuoso</li>
+          <li>LTspice</li>
+          <li>KiCad / Altium</li>
+          <li>MATLAB</li>
+        </ul>
+      </div>
+      <div class="skill-cat">
+        <div class="skill-cat-title">HDL &amp; Programming</div>
+        <ul class="skill-list">
+          <li>Verilog (RTL)</li>
+          <li>Python</li>
+          <li>C / C++</li>
+          <li>MIPS / x86 Assembly</li>
+        </ul>
+      </div>
+      <div class="skill-cat">
+        <div class="skill-cat-title">Lab &amp; Hardware</div>
+        <ul class="skill-list">
+          <li>Oscilloscope / AWG</li>
+          <li>PCB Bring-up &amp; Debug</li>
+          <li>Soldering</li>
+          <li>ATMEL / PIC MCU</li>
+        </ul>
+      </div>
+    </div></section>
+
+  <div class="divider"></div>
+
+  <!-- BEYOND -->
+  <section id="hobby">
+    <p class="section-label reveal">// 04. Beyond the Lab</p>
+    <h2 class="reveal">The hands don't stop at schematics</h2>
+    <div class="hobby-grid">
+      <div class="hobby-card reveal" data-glyph="&#x2699;" style="grid-column: 1 / -1;">
+        <div class="hobby-title">Motorcycle Restoration &amp; Resale</div>
+        <p class="hobby-desc">I source, mechanically refurbish, and resell motorcycles, diagnosing electrical faults, rebuilding carburetors, and chasing gremlins in aging wiring harnesses. The same mindset that drives circuit debug drives wrench work: systematic, patient, always tracing from first principles.</p>
+        <div class="schematic-gallery" data-gallery="moto" style="margin-top: 1.25rem;">
+          <div class="thumb-wrap">
+            <img class="schematic-thumb" src="moto_before.jpg" alt="Engine out, frame stripped" data-caption="Before — Engine pulled, frame stripped and powdercoated">
+            <div class="schematic-label">Before</div>
+          </div>
+          <div class="thumb-wrap">
+            <img class="schematic-thumb" src="moto_after.jpg" alt="Finished motorcycle" data-caption="After — Fully restored and detailed">
+            <div class="schematic-label">After</div>
+          </div>
+          <div class="thumb-wrap">
+            <img class="schematic-thumb" src="moto_garage.jpg" alt="Fleet" data-caption="Current fleet — Multiple bikes sourced, restored, and resold">
+            <div class="schematic-label">Fleet</div>
+          </div>
+        </div>
+      </div>
+      <div class="hobby-card reveal" data-glyph="&#x25B6;">
+        <div class="hobby-title">Entrepreneurship &amp; Business</div>
+        <p class="hobby-desc">Beyond engineering, I run a licensed used car dealership, managing acquisition, compliance, and end-to-end documentation. Building systems, reading contracts, and closing deals has sharpened my instincts on the business side of any engineering product.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <p class="section-label reveal">// 05. Contact</p>
+    <h2 class="reveal">Let's connect</h2>
+    <div class="contact-content reveal">
+      <p>I recently graduated from SDSU with a B.S. in Electrical Engineering and am actively seeking full-time roles in analog/mixed-signal IC design, RF engineering, or power electronics. If you're working on something interesting, reach out.</p>
+      <div class="contact-links">
+        <a href="mailto:meroxachidze@gmail.com" class="btn btn-primary">Email Me</a>
+        <a href="https://www.linkedin.com/in/merabikhachidze/" target="_blank" class="btn">LinkedIn</a>
+      </div>
+      <div class="contact-detail">
+        <span><a href="mailto:meroxachidze@gmail.com">meroxachidze@gmail.com</a></span>
+        <span>(650) 398-6021</span>
+        <span>San Diego, CA</span>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>© 2026 Merabi Khachidze &mdash; Electrical &amp; Computer Engineer &mdash; SDSU</p>
+  </footer>
+
+  <script>
+    // Typing animation
+    const phrases = ['Analog & Mixed-Signal Design','Power Electronics','RF & Wireless Systems','ADC / DAC Architecture','PCB Design & Bring-up','Embedded Systems'];
+    let pi = 0, ci = 0, deleting = false;
+    const el = document.getElementById('typed-text');
+    function type() {
+      const word = phrases[pi];
+      if (!deleting) {
+        el.textContent = word.slice(0, ci + 1); ci++;
+        if (ci === word.length) { deleting = true; setTimeout(type, 1800); return; }
+        setTimeout(type, 65);
+      } else {
+        el.textContent = word.slice(0, ci - 1); ci--;
+        if (ci === 0) { deleting = false; pi = (pi + 1) % phrases.length; setTimeout(type, 300); return; }
+        setTimeout(type, 38);
+      }
+    }
+    setTimeout(type, 900);
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const revObs = new IntersectionObserver((entries) => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) { setTimeout(() => e.target.classList.add('visible'), i * 55); revObs.unobserve(e.target); }
+      });
+    }, { threshold: 0.07 });
+    reveals.forEach(el => revObs.observe(el));
+
+    // Skill bars
+    const barObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          document.querySelectorAll('.skill-bar-fill').forEach(b => { b.style.width = b.dataset.width + '%'; });
+          barObs.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.2 });
+    const bw = document.getElementById('skill-bars');
+    if (bw) barObs.observe(bw);
+
+    // Filter
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.project-card').forEach(card => {
+          card.classList.toggle('hidden', f !== 'all' && card.dataset.category !== f);
+        });
+      });
+    });
+
+    // Expand/collapse
+    document.querySelectorAll('.project-header').forEach(header => {
+      header.addEventListener('click', () => header.closest('.project-card').classList.toggle('open'));
+    });
+
+    // Lightbox
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    const lbCap = document.getElementById('lb-caption');
+    let currentGallery = [], currentIdx = 0;
+
+    function openLightbox(imgs, idx) {
+      currentGallery = imgs; currentIdx = idx;
+      lbImg.src = imgs[idx].src;
+      lbCap.textContent = imgs[idx].dataset.caption || '';
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeLightbox() {
+      lb.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function navLightbox(dir) {
+      currentIdx = (currentIdx + dir + currentGallery.length) % currentGallery.length;
+      lbImg.src = currentGallery[currentIdx].src;
+      lbCap.textContent = currentGallery[currentIdx].dataset.caption || '';
+    }
+
+    document.querySelectorAll('.schematic-gallery').forEach(gallery => {
+      const imgs = Array.from(gallery.querySelectorAll('.schematic-thumb'));
+      imgs.forEach((img, i) => {
+        img.addEventListener('click', (e) => { e.stopPropagation(); openLightbox(imgs, i); });
+      });
+    });
+
+    document.getElementById('lb-close').addEventListener('click', closeLightbox);
+    document.getElementById('lb-prev').addEventListener('click', () => navLightbox(-1));
+    document.getElementById('lb-next').addEventListener('click', () => navLightbox(1));
+    lb.addEventListener('click', (e) => { if (e.target === lb) closeLightbox(); });
+    document.addEventListener('keydown', (e) => {
+      if (!lb.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') navLightbox(1);
+      if (e.key === 'ArrowLeft') navLightbox(-1);
+    });
+  </script>
+</body>
+</html>
